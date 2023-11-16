@@ -4,6 +4,7 @@ import os
 from matplotlib import pyplot as plt
 import time
 import mediapipe as mp
+import tensorflow as tf
 from sklearn.model_selection import train_test_split
 from tensorflow.keras.utils import to_categorical
 from tensorflow.keras.models import Sequential
@@ -19,7 +20,7 @@ DATA_PATH = './MP_Data'
 
 # Use this version when adding new data or training that new data
 #actions = np.array(['hello', 'thanks', 'iloveyou'])
-actions = np.array(['a', 'b', 'c'])
+actions = np.array(['a', 'b', 'c', 'hello', 'thanks', 'iloveyou'])
 
 
 # use this version when not adding new data
@@ -150,6 +151,7 @@ def train_new_words():
 # This is the code I used for training the original model with 3 words, we need to look into how to add new words
 # without retraining the entire model
 def train_model(model):
+    model = Sequential()
     model.add(LSTM(64, return_sequences=True, activation='relu', input_shape=(30, 126)))
     model.add(LSTM(128, return_sequences=True, activation='relu'))
     model.add(LSTM(64, return_sequences=False, activation='relu'))
@@ -159,6 +161,7 @@ def train_model(model):
 
     res = [.7, 0.2, 0.1]
     model.compile(optimizer='Adam', loss='categorical_crossentropy', metrics=['categorical_accuracy'])
+    model.load_weights('action.keras')
 
     #print(label_map)
 
@@ -184,14 +187,14 @@ def train_model(model):
 
     model.summary()
 
-    model.save('action.keras')
+    model.save('letters_new.keras')
     del model
 
 
 def prob_viz(res_new, actions_new, input_frame, colors):
     output_frame = input_frame.copy()
     for num, prob in enumerate(res_new):
-        cv2.rectangle(output_frame, (0, 60 + num * 40), (int(prob * 100), 90 + num * 40), colors[num], -1)
+        cv2.rectangle(output_frame, (0, 60 + num * 40), (int(prob * 100), 90 + num * 40), colors[0], -1)
         cv2.putText(output_frame, actions_new[num], (0, 85 + num * 40), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2,
                     cv2.LINE_AA)
 
@@ -257,7 +260,7 @@ def live_test():
             image = prob_viz(res, actions, image, colors)
 
             cv2.rectangle(image, (0, 0), (640, 40), (245, 117, 16), -1)
-            cv2.putText(image, ' '.join(sentence), (3, 30),
+            cv2.putText(image, ' '.join(sentence), (6, 30),
                         cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2, cv2.LINE_AA)
 
             # Show to screen
@@ -285,7 +288,7 @@ if __name__ == '__main__':
 
     res = [.7, 0.2, 0.1]
     model.compile(optimizer='Adam', loss='categorical_crossentropy', metrics=['categorical_accuracy'])
-    model.load_weights('letters.keras')
+    model.load_weights('letters_new.keras')
 
     # 1. New detection variables
     sequence = []
