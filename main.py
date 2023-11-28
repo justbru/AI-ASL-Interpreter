@@ -20,7 +20,7 @@ DATA_PATH = './MP_Data'
 
 # Use this version when adding new data or training that new data
 #actions = np.array(['hello', 'thanks', 'iloveyou'])
-actions = np.array(['a', 'b', 'c'])
+actions = np.array(['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', 'hello', 'iloveyou', 'thanks', ''])
 
 
 # use this version when not adding new data
@@ -150,9 +150,9 @@ def train_new_words():
 
 # This is the code I used for training the original model with 3 words, we need to look into how to add new words
 # without retraining the entire model
-def train_model(model):
+def train_model():
     model = Sequential()
-    model.add(LSTM(64, return_sequences=True, activation='relu', input_shape=(30, 126)))
+    model.add(LSTM(64, return_sequences=True, activation='relu', input_shape=(10, 126)))
     model.add(LSTM(128, return_sequences=True, activation='relu'))
     model.add(LSTM(64, return_sequences=False, activation='relu'))
     model.add(Dense(64, activation='relu'))
@@ -161,7 +161,7 @@ def train_model(model):
 
     res = [.7, 0.2, 0.1]
     model.compile(optimizer='Adam', loss='categorical_crossentropy', metrics=['categorical_accuracy'])
-    model.load_weights('action.keras')
+    # model.load_weights('action.keras')
 
     #print(label_map)
 
@@ -278,6 +278,11 @@ def live_test():
 
 
 if __name__ == '__main__':
+    # train_model()
+
+    # cap = cv2.VideoCapture(1)
+    # train_new_words()
+
     model = Sequential()
     model.add(LSTM(64, return_sequences=True, activation='relu', input_shape=(10, 126)))
     model.add(LSTM(128, return_sequences=True, activation='relu'))
