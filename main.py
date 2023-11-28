@@ -20,7 +20,7 @@ DATA_PATH = './MP_Data'
 
 # Use this version when adding new data or training that new data
 #actions = np.array(['hello', 'thanks', 'iloveyou'])
-actions = np.array(['a', 'b', 'c', 'hello', 'thanks', 'iloveyou'])
+actions = np.array(['a', 'b', 'c'])
 
 
 # use this version when not adding new data
