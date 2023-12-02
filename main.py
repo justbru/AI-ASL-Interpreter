@@ -213,7 +213,7 @@ def live_test():
 
     res = [.7, 0.2, 0.1]
     model.compile(optimizer='Adam', loss='categorical_crossentropy', metrics=['categorical_accuracy'])
-    model.load_weights('action.keras')
+    model.load_weights('letters_new.keras')
 
     # 1. New detection variables
     sequence = []
@@ -223,10 +223,17 @@ def live_test():
     count = 0
     test = 0
 
-    cap = cv2.VideoCapture(1)
+    cap = cv2.VideoCapture(0)
+    currentLetter = None
+    start = time.time()
+    current = time.time()
+
     # Set mediapipe model
     with mp_holistic.Holistic(min_detection_confidence=0.5, min_tracking_confidence=0.5) as holistic:
         while cap.isOpened():
+            # Update time
+            current = time.time()
+
             # Read feed
             ret, frame = cap.read()
 
@@ -244,10 +251,14 @@ def live_test():
             sequence = sequence[-10:]
 
             if len(sequence) == 10:
-                res = model.predict(np.expand_dims(sequence, axis=0))[0]
+                res = model.predict(np.expand_dims(sequence, axis=0), verbose=0)[0]
 
             # 3. Viz logic
-            if res[np.argmax(res)] > threshold:
+            if np.argmax(res) != currentLetter:
+                currentLetter = np.argmax(res)
+                start = time.time()
+
+            if current - start > 0.4 and res[np.argmax(res)] > threshold:
                 if len(sentence) > 0:
                     if actions[np.argmax(res)] != sentence[-1]:
                         sentence.append(actions[np.argmax(res)])
@@ -261,7 +272,7 @@ def live_test():
             image = prob_viz(res, actions, image, colors)
 
             cv2.rectangle(image, (0, 0), (640, 40), (245, 117, 16), -1)
-            cv2.putText(image, ' '.join(sentence), (6, 30),
+            cv2.putText(image, ' '.join(sentence), (3, 30),
                         cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2, cv2.LINE_AA)
 
             # Show to screen
