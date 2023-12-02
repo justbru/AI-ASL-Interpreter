@@ -10,6 +10,7 @@ from tensorflow.keras.utils import to_categorical
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import LSTM, Dense
 from tensorflow.keras.callbacks import TensorBoard
+import time
 from sklearn.metrics import multilabel_confusion_matrix, accuracy_score
 
 mp_holistic = mp.solutions.holistic  # Holistic model
@@ -303,10 +304,17 @@ if __name__ == '__main__':
     count = 0
     test = 0
 
-    cap = cv2.VideoCapture(1)
+    cap = cv2.VideoCapture(0)
+    currentLetter = None
+    start = time.time()
+    current = time.time()
+
     # Set mediapipe model
     with mp_holistic.Holistic(min_detection_confidence=0.5, min_tracking_confidence=0.5) as holistic:
         while cap.isOpened():
+            # Update time
+            current = time.time()
+
             # Read feed
             ret, frame = cap.read()
 
@@ -324,10 +332,14 @@ if __name__ == '__main__':
             sequence = sequence[-10:]
 
             if len(sequence) == 10:
-                res = model.predict(np.expand_dims(sequence, axis=0))[0]
+                res = model.predict(np.expand_dims(sequence, axis=0), verbose=0)[0]
 
             # 3. Viz logic
-            if res[np.argmax(res)] > threshold:
+            if np.argmax(res) != currentLetter:
+                currentLetter = np.argmax(res)
+                start = time.time()
+
+            if current - start > 0.4 and res[np.argmax(res)] > threshold:
                 if len(sentence) > 0:
                     if actions[np.argmax(res)] != sentence[-1]:
                         sentence.append(actions[np.argmax(res)])
