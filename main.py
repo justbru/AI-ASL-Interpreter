@@ -20,8 +20,8 @@ mp_drawing = mp.solutions.drawing_utils  # Drawing utilities
 DATA_PATH = './MP_Data'
 
 # Use this version when adding new data or training that new data
-#actions = np.array(['hello', 'thanks', 'iloveyou'])
-actions = np.array(['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', 'hello', 'iloveyou', 'thanks', ''])
+#actions = np.array(['my', 'name'])
+actions = np.array(['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', 'hello', 'iloveyou', 'thanks', 'my', 'name', ''])
 
 
 # use this version when not adding new data
@@ -290,7 +290,7 @@ def live_test():
 
 
 if __name__ == '__main__':
-    # train_model()
+    #train_model()
 
     # cap = cv2.VideoCapture(1)
     # train_new_words()
@@ -315,7 +315,7 @@ if __name__ == '__main__':
     count = 0
     test = 0
 
-    cap = cv2.VideoCapture(0)
+    cap = cv2.VideoCapture(1)
     currentLetter = None
     start = time.time()
     current = time.time()
